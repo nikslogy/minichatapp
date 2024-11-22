@@ -60,14 +60,14 @@ const Message = ({ message }) => {
                 <div className="chat-header">
                     <time className="text-xs opacity-50 text-white">12:45</time>
                 </div>
-                <div className={`chat-bubble ${message?.senderId !== authUser?._id ? 'bg-gray-200 text-black' : ''}`}>
-                    {message?.message && <p>{message.message}</p>}
+                <div className={`chat-bubble max-w-[75%] md:max-w-[60%] ${message?.senderId !== authUser?._id ? 'bg-gray-200 text-black' : ''}`}>
+                    {message?.message && <p className="text-sm md:text-base">{message.message}</p>}
                     {message?.image && (
                         <>
                             <img 
                                 src={message.image}  // Direct base64 string
                                 alt="message attachment" 
-                                className="w-20 h-20 rounded-lg mt-2 cursor-pointer"
+                                className="w-16 h-16 md:w-20 md:h-20 rounded-lg mt-2 cursor-pointer object-cover"
                                 onClick={openModal}
                             />
                             <Modal

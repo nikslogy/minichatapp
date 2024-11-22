@@ -2,17 +2,14 @@ import React, { useState } from 'react';
 import { IoSend } from "react-icons/io5";
 import { IoMdImages } from "react-icons/io";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { setMessages } from '../redux/messageSlice';
+import { useSelector } from "react-redux";
 import { BASE_URL } from '..';
 
 const SendInput = () => {
     const [message, setMessage] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
-    const dispatch = useDispatch();
     const { selectedUser } = useSelector(store => store.user);
-    const { messages } = useSelector(store => store.message);
 
     const convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -46,27 +43,19 @@ const SendInput = () => {
         if (!message && !selectedImage) return;
 
         try {
-            const payload = {
-                message: message || '',
-                image: selectedImage || ''
-            };
+            const formData = new FormData();
+            if (message) formData.append('message', message);
+            if (selectedImage) formData.append('image', selectedImage);
 
-            const res = await axios.post(
-                `${BASE_URL}/api/v1/message/send/${selectedUser?._id}`, 
-                payload,
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    withCredentials: true
-                }
-            );
+            await axios.post(`${BASE_URL}/api/v1/message/send/${selectedUser?._id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                withCredentials: true
+            });
             
-            if (res.data?.newMessage) {
-                dispatch(setMessages([...messages, res.data.newMessage]));
-                setMessage("");
-                removeImage();
-            }
+            setMessage("");
+            removeImage();
         } catch (error) {
             console.log("Error sending message:", error);
         }
