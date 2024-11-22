@@ -2,45 +2,51 @@ import { Conversation } from "../models/conversationModel.js";
 import { Message } from "../models/messageModel.js";
 import { getReceiverSocketId, io } from "../socket/socket.js";
 
-export const sendMessage = async (req,res) => {
+export const sendMessage = async (req, res) => {
     try {
         const senderId = req.id;
         const receiverId = req.params.id;
-        const {message} = req.body;
+        const { message, image } = req.body; // Destructure directly from req.body
 
-        let gotConversation = await Conversation.findOne({
-            participants:{$all : [senderId, receiverId]},
+        if (!message && !image) {
+            return res.status(400).json({ error: "Message or image is required" });
+        }
+
+        let conversation = await Conversation.findOne({
+            participants: { $all: [senderId, receiverId] },
         });
 
-        if(!gotConversation){
-            gotConversation = await Conversation.create({
-                participants:[senderId, receiverId]
-            })
-        };
+        if (!conversation) {
+            conversation = await Conversation.create({
+                participants: [senderId, receiverId]
+            });
+        }
+
         const newMessage = await Message.create({
             senderId,
             receiverId,
-            message
+            message,
+            image
         });
-        if(newMessage){
-            gotConversation.messages.push(newMessage._id);
-        };
-        
 
-        await Promise.all([gotConversation.save(), newMessage.save()]);
-         
+        conversation.messages.push(newMessage._id);
+        await conversation.save();
+
         // SOCKET IO
         const receiverSocketId = getReceiverSocketId(receiverId);
-        if(receiverSocketId){
+        if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
         }
+
         return res.status(201).json({
             newMessage
-        })
+        });
     } catch (error) {
         console.log(error);
+        res.status(500).json({ error: error.message });
     }
-}
+};
+
 export const getMessage = async (req,res) => {
     try {
         const receiverId = req.params.id;
