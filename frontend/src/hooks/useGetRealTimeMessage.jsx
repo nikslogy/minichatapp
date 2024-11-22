@@ -5,6 +5,7 @@ import { addMessage } from "../redux/messageSlice";
 const useGetRealTimeMessage = () => {
   const { socket } = useSelector((store) => store.socket);
   const { selectedUser } = useSelector((store) => store.user);
+  const { authUser } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -12,10 +13,10 @@ const useGetRealTimeMessage = () => {
     if (!socket) return;
 
     const handleNewMessage = (newMessage) => {
-      console.log("New message received:", newMessage);
-      if (
-        newMessage.senderId === selectedUser?._id || 
-        newMessage.receiverId === selectedUser?._id
+      // Only handle messages from other users
+      if (newMessage.senderId !== authUser?._id && 
+          (newMessage.senderId === selectedUser?._id || 
+          newMessage.receiverId === selectedUser?._id)
       ) {
         dispatch(addMessage(newMessage));
       }
@@ -28,7 +29,7 @@ const useGetRealTimeMessage = () => {
         socket.off("newMessage", handleNewMessage);
       }
     };
-  }, [socket, dispatch, selectedUser]);
+  }, [socket, dispatch, selectedUser, authUser]);
 
   const handleImageUpload = async (chatId, image) => {
     try {

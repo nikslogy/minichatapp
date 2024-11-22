@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { IoSend } from "react-icons/io5";
 import { IoMdImages } from "react-icons/io";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addMessage } from '../redux/messageSlice';
 import { BASE_URL } from '..';
 
 const SendInput = () => {
     const [message, setMessage] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
+    const dispatch = useDispatch();
     const { selectedUser } = useSelector(store => store.user);
 
     const convertToBase64 = (file) => {
@@ -60,6 +62,8 @@ const SendInput = () => {
             );
             
             if (res.data?.newMessage) {
+                // Add message directly to Redux store
+                dispatch(addMessage(res.data.newMessage));
                 setMessage("");
                 removeImage();
             }
