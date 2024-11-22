@@ -43,21 +43,28 @@ const SendInput = () => {
         if (!message && !selectedImage) return;
 
         try {
-            const formData = new FormData();
-            if (message) formData.append('message', message);
-            if (selectedImage) formData.append('image', selectedImage);
+            const payload = {
+                message: message || '',
+                image: selectedImage || ''
+            };
 
-            await axios.post(`${BASE_URL}/api/v1/message/send/${selectedUser?._id}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                withCredentials: true
-            });
+            const res = await axios.post(
+                `${BASE_URL}/api/v1/message/send/${selectedUser?._id}`, 
+                payload,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                }
+            );
             
-            setMessage("");
-            removeImage();
+            if (res.data?.newMessage) {
+                setMessage("");
+                removeImage();
+            }
         } catch (error) {
-            console.log("Error sending message:", error);
+            console.error("Error sending message:", error?.response?.data || error);
         }
     };
 

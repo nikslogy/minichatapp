@@ -6,10 +6,18 @@ export const sendMessage = async (req, res) => {
     try {
         const senderId = req.id;
         const receiverId = req.params.id;
-        const { message, image } = req.body; // Destructure directly from req.body
+        const { message, image } = req.body;
 
+        // Validate inputs
         if (!message && !image) {
-            return res.status(400).json({ error: "Message or image is required" });
+            return res.status(400).json({ 
+                error: "Message or image is required",
+                received: { message, image: !!image }
+            });
+        }
+
+        if (!receiverId) {
+            return res.status(400).json({ error: "Receiver ID is required" });
         }
 
         let conversation = await Conversation.findOne({
@@ -25,22 +33,22 @@ export const sendMessage = async (req, res) => {
         const newMessage = await Message.create({
             senderId,
             receiverId,
-            message,
-            image
+            ...(message && { message }),
+            ...(image && { image })
         });
 
         await conversation.messages.push(newMessage._id);
         await conversation.save();
 
-        // Populate the message with sender details before emitting
+        // Populate the message before sending
         const populatedMessage = await Message.findById(newMessage._id);
 
-        // SOCKET IO
+        // Socket.IO
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", populatedMessage);
         }
-        // Also emit to sender
+
         const senderSocketId = getReceiverSocketId(senderId);
         if (senderSocketId) {
             io.to(senderSocketId).emit("newMessage", populatedMessage);
@@ -50,8 +58,11 @@ export const sendMessage = async (req, res) => {
             newMessage: populatedMessage
         });
     } catch (error) {
-        console.error("Error sending message:", error);
-        res.status(500).json({ error: error.message });
+        console.error("Send message error:", error);
+        return res.status(500).json({ 
+            error: "Failed to send message",
+            details: error.message 
+        });
     }
 };
 

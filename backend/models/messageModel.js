@@ -13,16 +13,20 @@ const messageModel = new mongoose.Schema({
     },
     message: {
         type: String,
-        required: function() {
-            return !this.image; // Message is required only if there's no image
-        }
+        default: ''
     },
     image: {
-        type: String, // Will store base64 string
-        required: function() {
-            return !this.message; // Image is required only if there's no message
-        }
+        type: String,
+        default: ''
     }
 }, { timestamps: true });
+
+// Ensure at least one of message or image is provided
+messageModel.pre('save', function(next) {
+    if (!this.message && !this.image) {
+        next(new Error('Message or image is required'));
+    }
+    next();
+});
 
 export const Message = mongoose.model("Message", messageModel);
