@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 const corsOption={
     origin: process.env.NODE_ENV === 'production' 
-        ? 'https://your-render-app-url.onrender.com'
+        ? 'https://quickchat-ipik.onrender.com'
         : 'http://localhost:3000',
     credentials: true
 };

@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: process.env.NODE_ENV === 'production'
-            ? 'https://your-render-app-url.onrender.com'
+            ? 'https://quickchat-ipik.onrender.com'
             : 'http://localhost:3000',
         methods: ['GET', 'POST'],
         credentials: true
