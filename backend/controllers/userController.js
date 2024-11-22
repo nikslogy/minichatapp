@@ -94,9 +94,20 @@ export const logout = (req, res) => {
 export const getOtherUsers = async (req, res) => {
     try {
         const loggedInUserId = req.id;
-        const otherUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+        if (!loggedInUserId) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
+
+        const otherUsers = await User.find({ _id: { $ne: loggedInUserId } })
+            .select("-password")
+            .lean();
+
         return res.status(200).json(otherUsers);
     } catch (error) {
-        console.log(error);
+        console.error("Error getting other users:", error);
+        return res.status(500).json({ 
+            message: "Error fetching users",
+            error: error.message 
+        });
     }
 }
