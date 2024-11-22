@@ -17,6 +17,7 @@ import {
     key: 'root',
     version: 1,
     storage,
+    blacklist: ['socket'] // Add this line to prevent socket serialization
   }
 
   const rootReducer = combineReducers({

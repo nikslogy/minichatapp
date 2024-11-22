@@ -6,7 +6,8 @@ const socketSlice = createSlice({
     },
     reducers:{
         setSocket:(state, action)=>{
-            state.socket = action.payload;
+            // Don't store socket in Redux state
+            state.socket = null;
         }
     }
 });

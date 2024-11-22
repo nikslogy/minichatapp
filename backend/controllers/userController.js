@@ -65,11 +65,11 @@ export const login = async (req, res) => {
 
         return res.status(200)
             .cookie("token", token, {
-                maxAge: 1 * 24 * 60 * 60 * 1000,
+                maxAge: 24 * 60 * 60 * 1000, // 1 day
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production', // Add secure flag in production
-                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-                domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                path: '/'
             })
             .json({
                 _id: user._id,

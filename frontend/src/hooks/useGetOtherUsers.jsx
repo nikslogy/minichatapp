@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setOtherUsers } from '../redux/userSlice';
@@ -16,16 +16,22 @@ const useGetOtherUsers = () => {
                         'Content-Type': 'application/json'
                     }
                 });
+                
                 if (res.data) {
+                    console.log("Fetched users:", res.data);
                     dispatch(setOtherUsers(res.data));
                 }
             } catch (error) {
-                console.error("Error fetching users:", error?.response?.data || error.message);
+                console.error("Error fetching users:", 
+                    error?.response?.data || error.message);
+                if (error?.response?.status === 401) {
+                    dispatch(setOtherUsers([]));
+                }
             }
         };
+
         fetchOtherUsers();
     }, [dispatch]);
+};
 
-}
-
-export default useGetOtherUsers
+export default useGetOtherUsers;
