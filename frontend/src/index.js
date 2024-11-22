@@ -11,7 +11,7 @@ import { persistStore } from 'redux-persist';
 let persistor = persistStore(store);
 
 export const BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://quickchat-ipik.onrender.com/' 
+  ? 'https://quickchat-ipik.onrender.com' 
   : "http://localhost:8080";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
