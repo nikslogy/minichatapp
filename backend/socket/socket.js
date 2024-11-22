@@ -6,9 +6,12 @@ const app = express();
 
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors:{
-        origin:['http://localhost:3000'],
-        methods:['GET', 'POST'],
+    cors: {
+        origin: process.env.NODE_ENV === 'production'
+            ? 'https://your-render-app-url.onrender.com'
+            : 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+        credentials: true
     },
 });
 
@@ -35,4 +38,3 @@ io.on('connection', (socket)=>{
 })
 
 export {app, io, server};
-

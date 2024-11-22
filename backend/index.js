@@ -21,8 +21,10 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json()); 
 app.use(cookieParser());
 const corsOption={
-    origin:'http://localhost:3000',
-    credentials:true
+    origin: process.env.NODE_ENV === 'production' 
+        ? 'https://your-render-app-url.onrender.com'
+        : 'http://localhost:3000',
+    credentials: true
 };
 app.use(cors(corsOption)); 
 
