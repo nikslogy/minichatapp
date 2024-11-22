@@ -1,6 +1,10 @@
 {
   "dependencies": {
+    "daisyui": "^4.12.14",
     "multer": "^1.4.5-lts.1",
     "react-modal": "^3.16.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
