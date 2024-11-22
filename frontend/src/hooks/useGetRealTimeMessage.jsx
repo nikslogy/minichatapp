@@ -12,6 +12,7 @@ const useGetRealTimeMessage = () => {
     if (!socket) return;
 
     const handleNewMessage = (newMessage) => {
+      console.log("New message received:", newMessage);
       if (
         newMessage.senderId === selectedUser?._id || 
         newMessage.receiverId === selectedUser?._id
@@ -23,7 +24,9 @@ const useGetRealTimeMessage = () => {
     socket.on("newMessage", handleNewMessage);
 
     return () => {
-      socket.off("newMessage", handleNewMessage);
+      if (socket) {
+        socket.off("newMessage", handleNewMessage);
+      }
     };
   }, [socket, dispatch, selectedUser]);
 

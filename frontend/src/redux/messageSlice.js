@@ -1,20 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-    messages: []  // Initialize as empty array
-};
-
 const messageSlice = createSlice({
-    name: "message",
-    initialState,
-    reducers: {
-        setMessages: (state, action) => {
-            state.messages = action.payload || []; // Ensure it's always an array
-        },
-        addMessage: (state, action) => {
-            state.messages = [...(state.messages || []), action.payload];
-        }
+  name: "message",
+  initialState: {
+    messages: []
+  },
+  reducers: {
+    setMessages: (state, action) => {
+      state.messages = action.payload || [];
+    },
+    addMessage: (state, action) => {
+      state.messages = [...state.messages, action.payload];
     }
+  }
 });
 
 export const { setMessages, addMessage } = messageSlice.actions;

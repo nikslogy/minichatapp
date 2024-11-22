@@ -29,20 +29,28 @@ export const sendMessage = async (req, res) => {
             image
         });
 
-        conversation.messages.push(newMessage._id);
+        await conversation.messages.push(newMessage._id);
         await conversation.save();
+
+        // Populate the message with sender details before emitting
+        const populatedMessage = await Message.findById(newMessage._id);
 
         // SOCKET IO
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", newMessage);
+            io.to(receiverSocketId).emit("newMessage", populatedMessage);
+        }
+        // Also emit to sender
+        const senderSocketId = getReceiverSocketId(senderId);
+        if (senderSocketId) {
+            io.to(senderSocketId).emit("newMessage", populatedMessage);
         }
 
         return res.status(201).json({
-            newMessage
+            newMessage: populatedMessage
         });
     } catch (error) {
-        console.log(error);
+        console.error("Error sending message:", error);
         res.status(500).json({ error: error.message });
     }
 };
