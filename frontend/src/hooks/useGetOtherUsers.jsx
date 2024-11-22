@@ -10,17 +10,21 @@ const useGetOtherUsers = () => {
     useEffect(() => {
         const fetchOtherUsers = async () => {
             try {
-                axios.defaults.withCredentials = true;
-                const res = await axios.get(`${BASE_URL}/api/v1/user`);
-                // store
-                console.log("other users -> ",res);
-                dispatch(setOtherUsers(res.data));
+                const res = await axios.get(`${BASE_URL}/api/v1/user`, {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (res.data) {
+                    dispatch(setOtherUsers(res.data));
+                }
             } catch (error) {
-                console.log(error);
+                console.error("Error fetching users:", error?.response?.data || error.message);
             }
-        }
+        };
         fetchOtherUsers();
-    }, [])
+    }, [dispatch]);
 
 }
 
