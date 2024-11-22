@@ -8,33 +8,32 @@ const MessageContainer = () => {
     const isOnline = onlineUsers?.includes(selectedUser?._id);
    
     return (
-        <>
-            {selectedUser !== null ? (
-                <div className='w-full md:min-w-[350px] lg:min-w-[550px] flex flex-col h-[100vh] md:h-auto'>
-                    <div className='flex gap-2 items-center bg-white border-b border-gray-300 px-2 md:px-4 py-2 mb-2'>
+        <div className='h-full flex flex-col'>
+            {selectedUser ? (
+                <>
+                    <div className='flex items-center bg-white border-b border-gray-300 px-4 py-3'>
                         <div className={`avatar ${isOnline ? 'online' : ''}`}>
-                            <div className='w-8 md:w-12 rounded-full'>
+                            <div className='w-10 md:w-12 rounded-full'>
                                 <img src={selectedUser?.profilePhoto} alt="user-profile" />
                             </div>
                         </div>
-                        <div className='flex flex-col flex-1'>
-                            <div className='flex justify-between gap-2'>
-                                <p className='font-semibold text-sm md:text-base'>{selectedUser?.fullName}</p>
-                            </div>
+                        <div className='ml-3'>
+                            <p className='font-semibold'>{selectedUser?.fullName}</p>
+                            <p className='text-xs text-gray-500'>{isOnline ? 'Online' : 'Offline'}</p>
                         </div>
                     </div>
-                    <div className='flex-1 overflow-hidden flex flex-col'>
+                    <div className='flex-1 flex flex-col h-[calc(100vh-180px)] md:h-[calc(90vh-140px)]'>
                         <Messages />
                         <SendInput />
                     </div>
-                </div>
+                </>
             ) : (
-                <div className='w-full md:min-w-[550px] flex flex-col justify-center items-center bg-white p-4'>
-                    <h1 className='text-2xl md:text-4xl text-gray-800 font-bold text-center'>Hi, {authUser?.fullName}</h1>
-                    <h2 className='text-xl md:text-2xl text-gray-600'>Let's start a conversation</h2>
+                <div className='h-full flex flex-col items-center justify-center p-4'>
+                    <h1 className='text-2xl md:text-3xl text-gray-800 font-bold text-center'>Welcome, {authUser?.fullName}</h1>
+                    <p className='text-gray-600 mt-2'>Select a chat to start messaging</p>
                 </div>
             )}
-        </>
+        </div>
     );
 }
 

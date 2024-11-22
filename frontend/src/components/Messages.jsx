@@ -18,12 +18,10 @@ const Messages = () => {
         scrollToBottom();
     }, [messages]);
 
-    const safeMessages = Array.isArray(messages) ? messages : [];
-
     return (
-        <div className='px-2 md:px-4 flex-1 overflow-y-auto'>
-            <div className='space-y-2'>
-                {safeMessages.map((message) => (
+        <div className='flex-1 overflow-y-auto px-4 py-2'>
+            <div className='flex flex-col space-y-4'>
+                {messages?.map((message) => (
                     <Message key={message._id} message={message} />
                 ))}
                 <div ref={messagesEndRef} />

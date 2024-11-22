@@ -13,7 +13,6 @@ const Sidebar = () => {
     const [search, setSearch] = useState("");
     const {otherUsers} = useSelector(store=>store.user);
     const dispatch = useDispatch();
-
     const navigate = useNavigate();
 
     const logoutHandler = async () => {
@@ -39,24 +38,33 @@ const Sidebar = () => {
         }
     }
     return (
-        <div className='border-r border-gray-300 p-4 flex flex-col bg-gray-50'>
-          <form onSubmit={searchSubmitHandler} action="" className='flex items-center gap-2 mb-4'>
-            <input
-              value={search}
-              onChange={(e)=>setSearch(e.target.value)}
-              className='input input-bordered rounded-md flex-grow' type="text"
-              placeholder='Search...'
-            />
-            <button type='submit' className='btn bg-blue-500 text-white hover:bg-blue-600'>
-              <BiSearchAlt2 className='w-6 h-6 outline-none'/>
-            </button>
-          </form>
-          <OtherUsers/> 
-          <div className='mt-4'>
-            <button onClick={logoutHandler} className='btn btn-sm bg-red-500 text-white hover:bg-red-600'>Logout</button>
-          </div>
+        <div className='h-full flex flex-col bg-white'>
+            <div className='p-4 border-b border-gray-200'>
+                <form onSubmit={searchSubmitHandler} className='flex gap-2'>
+                    <input
+                        value={search}
+                        onChange={(e)=>setSearch(e.target.value)}
+                        className='input input-bordered rounded-md flex-1 text-sm'
+                        placeholder='Search users...'
+                    />
+                    <button type='submit' className='btn btn-sm bg-blue-500 text-white hover:bg-blue-600'>
+                        <BiSearchAlt2 className='w-4 h-4'/>
+                    </button>
+                </form>
+            </div>
+            <div className='flex-1 overflow-y-auto'>
+                <OtherUsers />
+            </div>
+            <div className='p-4 border-t border-gray-200'>
+                <button 
+                    onClick={logoutHandler}
+                    className='btn btn-sm btn-error text-white w-full'
+                >
+                    Logout
+                </button>
+            </div>
         </div>
-      )
-}
+    );
+};
 
 export default Sidebar
