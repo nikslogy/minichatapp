@@ -36,24 +36,24 @@ export const sendMessage = async (req, res) => {
             ...(message && { message }),
             ...(image && { image })
         });
-
+        
         await conversation.messages.push(newMessage._id);
         await conversation.save();
-
+        
         // Populate the message before sending
         const populatedMessage = await Message.findById(newMessage._id);
-
-        // Socket.IO
+        
+        // Socket.IO - Emit to both sender and receiver
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", populatedMessage);
+            io.to(receiverSocketId).emit('receiveMessage', populatedMessage);
         }
-
+        
         const senderSocketId = getReceiverSocketId(senderId);
         if (senderSocketId) {
-            io.to(senderSocketId).emit("newMessage", populatedMessage);
+            io.to(senderSocketId).emit('receiveMessage', populatedMessage);
         }
-
+        
         return res.status(201).json({
             newMessage: populatedMessage
         });
