@@ -30,14 +30,6 @@ io.on('connection', (socket) => {
         io.emit('getOnlineUsers', Object.keys(userSocketMap));
     }
 
-    // Add this new event listener
-    socket.on('sendMessage', (message) => {
-        const receiverSocketId = userSocketMap[message.receiverId];
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit('receiveMessage', message);
-        }
-    });
-
     socket.on('disconnect', () => {
         delete userSocketMap[userId];
         io.emit('getOnlineUsers', Object.keys(userSocketMap));

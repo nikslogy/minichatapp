@@ -10,7 +10,7 @@ export const sendMessage = async (req, res) => {
 
         // Validate inputs
         if (!message && !image) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: "Message or image is required",
                 received: { message, image: !!image }
             });
@@ -36,43 +36,44 @@ export const sendMessage = async (req, res) => {
             ...(message && { message }),
             ...(image && { image })
         });
-        
+
         await conversation.messages.push(newMessage._id);
         await conversation.save();
-        
+
         // Populate the message before sending
         const populatedMessage = await Message.findById(newMessage._id);
-        
+
+        // Socket.IO - Emit to both sender and receiver
         // Socket.IO - Emit to both sender and receiver
         const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit('receiveMessage', populatedMessage);
+            io.to(receiverSocketId).emit('newMessage', populatedMessage);
         }
-        
+
         const senderSocketId = getReceiverSocketId(senderId);
         if (senderSocketId) {
-            io.to(senderSocketId).emit('receiveMessage', populatedMessage);
+            io.to(senderSocketId).emit('newMessage', populatedMessage);
         }
-        
+
         return res.status(201).json({
             newMessage: populatedMessage
         });
     } catch (error) {
         console.error("Send message error:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             error: "Failed to send message",
-            details: error.message 
+            details: error.message
         });
     }
 };
 
-export const getMessage = async (req,res) => {
+export const getMessage = async (req, res) => {
     try {
         const receiverId = req.params.id;
         const senderId = req.id;
         const conversation = await Conversation.findOne({
-            participants:{$all : [senderId, receiverId]}
-        }).populate("messages"); 
+            participants: { $all: [senderId, receiverId] }
+        }).populate("messages");
         return res.status(200).json(conversation?.messages);
     } catch (error) {
         console.log(error);

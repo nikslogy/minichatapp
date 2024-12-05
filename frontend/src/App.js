@@ -8,6 +8,7 @@ import {useSelector, useDispatch} from "react-redux";
 import io from "socket.io-client";
 import { setOnlineUsers } from './redux/userSlice';
 import { BASE_URL } from '.';
+import { setSocket } from './redux/socketSlice';
 
 const router = createBrowserRouter([
   {
@@ -37,16 +38,20 @@ function App() {
         },
         withCredentials: true
       });
-
+  
+      // Store socket in Redux
+      dispatch(setSocket(socketRef.current));
+  
       socketRef.current.on('getOnlineUsers', (onlineUsers) => {
         dispatch(setOnlineUsers(onlineUsers));
       });
     }
-
+  
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
+        dispatch(setSocket(null));
       }
     };
   }, [authUser, dispatch]);
