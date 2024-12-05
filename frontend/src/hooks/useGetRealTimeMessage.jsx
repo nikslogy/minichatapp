@@ -12,15 +12,16 @@ const useGetRealTimeMessage = () => {
         if (!socket) return;
 
         const handleNewMessage = (newMessage) => {
+            // Only add message via socket if it's from the other user
             if (
-                (newMessage.senderId === selectedUser?._id || newMessage.receiverId === selectedUser?._id) &&
-                (newMessage.senderId === authUser?._id || newMessage.receiverId === authUser?._id)
+                newMessage.senderId !== authUser?._id && 
+                (newMessage.senderId === selectedUser?._id || 
+                newMessage.receiverId === selectedUser?._id)
             ) {
                 dispatch(addMessage(newMessage));
             }
         };
 
-        // Listen for newMessage event
         socket.on("newMessage", handleNewMessage);
 
         return () => {
