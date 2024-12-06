@@ -57,8 +57,11 @@ function App() {
   }, [authUser, dispatch]);
 
   return (
-    <div className="p-4 h-screen flex items-center justify-center bg-gray-100">
+    <div className="p-4 h-screen flex flex-col items-center justify-center bg-custom-blue">
       <RouterProvider router={router}/>
+      <div className="absolute bottom-0 mb-3">
+        <h1 className="text-white text-xl">Made by Nikit, Krushna and Akshay</h1>
+      </div>
     </div>
   );
 }
